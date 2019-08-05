@@ -14,4 +14,12 @@ const totalLikes = (blogs) => {
   }
 }
 
-module.exports = { dummy, totalLikes }
+const favoriteBlog = (blogs) => {
+
+  const higestLikedBlog = blogs.map(blog => blog['likes'])
+    .reduce((acc, blog) => Math.max(acc, blog))
+  const favBlog = blogs.filter(blog => blog.likes === higestLikedBlog)
+  return favBlog[0]
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog }
