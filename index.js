@@ -15,7 +15,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
     console.log('error connection to MongoDB:', error.message)
   })
 
-const cors = require('cors')
+// const cors = require('cors')
 app.use(bodyParser.json())
 app.use(express.json())
 app.use(blogRouter)

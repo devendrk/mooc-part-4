@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "nodemon index.js",
-    "test": "jest --verbose"
+    "watch": "NODE_ENV=production nodemon index.js",
+    "start": "NODE_ENV=production node index.js",
+    "lint": "eslint",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "eslint": "^6.1.0",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1"
