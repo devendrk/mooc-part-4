@@ -1,12 +1,10 @@
+const app = require('./app')
+const http = require('http')
 const config = require('./utils/config')
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
-const blogRouter = require('./controllers/blog')
-const mongoose = require('mongoose')
 
-console.log('connecting to', config.MONGODB_URI)
+const server = http.createServer(app)
 
+<<<<<<< HEAD
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
     console.log('connected to MongoDB')
@@ -22,3 +20,6 @@ app.use(blogRouter)
 
 const port = process.env.PORT
 app.listen(port, () => console.log(`Server running on port ${port}`))
+=======
+server.listen(config.PORT, () => console.log(`server is running on port ${config.PORT}`))
+>>>>>>> blogList-step-1-2
