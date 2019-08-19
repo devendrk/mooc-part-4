@@ -15,8 +15,8 @@ const blogSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  User:{
-    type: mongoose.schema.Types.ObjectId,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }
 })
@@ -29,6 +29,6 @@ blogSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-const Blog = mongoose.model('blog', blogSchema)
+const Blog = mongoose.model('Blog', blogSchema)
 
 module.exports = Blog
