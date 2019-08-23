@@ -26,7 +26,9 @@ router.post('/', async (req, res, next) => {
 
 router.get('/', async (req, res) => {
   try {
-    const blogs = await Blog.find({})
+    const blogs = await Blog
+      .find({})
+      .populate('user', { username: 1, name: 1 })
     res.send(blogs)
   } catch (error) {
     res.status(500).send(error)
