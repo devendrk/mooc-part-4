@@ -4,21 +4,20 @@ const User = require('../models/user')
 
 router.post('/', async (req, res, next) => {
   const body = req.body
-  const user = await User.findById(body.userId)
-
+  const user = await User.findOne({ name: body.userId })
+  console.log('ooooooooooooooo', user)
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
-
+    user: user.userId
   })
   try {
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
-    res.json(savedBlog.toJSON())
+    res.json(await savedBlog.json())
   } catch (error) {
     next(error)
   }
