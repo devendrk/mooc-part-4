@@ -1,34 +1,51 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = req => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
+    return authorization.substring(7)
+  }
+  return null
+}
 
 router.post('/', async (req, res, next) => {
   const body = req.body
-  const user = await User.findOne({ name: body.userId })
-  console.log('ooooooooooooooo', user)
-  const blog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    user: user.userId
-  })
+
+  const token = getTokenFrom(req)
   try {
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+      return res.status(401).json({ error: 'token missing or invalid' })
+    }
+    console.log( 'decodeToken',decodedToken)
+    const user = await User.findById(decodedToken.id)
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      user: user._id
+    })
+
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
-    res.json(await savedBlog.json())
-  } catch (error) {
-    next(error)
+    res.json(await savedBlog.toJSON())
+  } catch (exception) {
+    next(exception)
   }
 })
 
 router.get('/', async (req, res) => {
   try {
-    const blogs = await Blog
-      .find({})
-      .populate('user', { username: 1, name: 1 })
-    res.send(blogs)
+    const blogs = await Blog.find({}).populate('user', {
+      username: 1,
+      name: 1
+    })
+    res.json(blogs.map(blog => blog.toJSON()))
   } catch (error) {
     res.status(500).send(error)
   }
@@ -38,7 +55,7 @@ router.get('/:id', async (req, res, next) => {
   try {
     const blog = await Blog.findById(req.params.id)
     if (blog) {
-      res.send(blog)
+      res.json(blog.toJSON)
     } else {
       res.status(404).end()
     }
@@ -55,9 +72,11 @@ router.put('/:id', async (req, res, next) => {
     const blog = {
       title: body.title,
       author: body.author,
-      url: body.url,
+      url: body.url
     }
-    const blogUpdate = await Blog.findOneAndUpdate(req.params.id, blog, { new: true })
+    const blogUpdate = await Blog.findOneAndUpdate(req.params.id, blog, {
+      new: true
+    })
     res.send(blogUpdate)
   } catch (error) {
     next(error)
